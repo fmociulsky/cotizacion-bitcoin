@@ -19,15 +19,6 @@ public class BitcoinValueService {
     public BitcoinValueService() {
     }
 
-    @Scheduled(fixedRate = 5000)
-    public void saveBitcoinValue(){
-        final Double cotizacion = CotizacionRestBuilder.getCotizacionFromUrl(URL);
-        if(cotizacion != null){
-            final BitcoinValue bitcoinValueSave = new BitcoinValue(LocalDateTime.now(), cotizacion);
-            bitcoinValueDao.save(bitcoinValueSave);
-        }
-    }
-
     public List<BitcoinValue> getAllDates() {
         return bitcoinValueDao.findAll().stream().limit(10).collect(Collectors.toList());
     }
@@ -64,6 +55,4 @@ public class BitcoinValueService {
     public Double getPromedioCotizacionEntreFechas(LocalDateTime localDateTimeDesde, LocalDateTime localDateTimeHasta) {
         return bitcoinValueDao.getCotizacionesEntreFechas(localDateTimeDesde, localDateTimeHasta).stream().mapToDouble(BitcoinValue::getCotizacion).average().orElse(0d);
     }
-
-    private static final String URL ="https://cex.io/api/last_price/BTC/USD";
 }
