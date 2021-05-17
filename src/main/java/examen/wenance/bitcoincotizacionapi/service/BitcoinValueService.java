@@ -20,7 +20,7 @@ public class BitcoinValueService {
     }
 
     public List<BitcoinValue> getAllDates() {
-        return bitcoinValueDao.findAll().stream().limit(10).collect(Collectors.toList());
+        return bitcoinValueDao.findAll().stream().collect(Collectors.toList());
     }
 
     public Double getCotizacionPorFecha(LocalDateTime localDateTime) {

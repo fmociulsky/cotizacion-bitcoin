@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Timestamp;
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/cotizaciones")
-public class BitcoinValueController {
+public class BitcoinCotizacionController {
 
     @Autowired
     BitcoinValueService bitcoinValueService;
@@ -25,7 +26,8 @@ public class BitcoinValueController {
     public ResponseEntity<?> getCotizacionPorFecha(@RequestParam(value = "fecha_exacta") String fecha_exacta){
         final Timestamp timestamp = Timestamp.valueOf(fecha_exacta);
         final Double value = bitcoinValueService.getCotizacionPorFechaStream(timestamp.toLocalDateTime());
-        return new ResponseEntity<Double>(value, OK);
+        if(value != 0d) return new ResponseEntity<Double>(value, OK);
+        return new ResponseEntity<String>(ERROR_MSG, NOT_FOUND);
     }
 
     @GetMapping("/promedio")
@@ -33,7 +35,8 @@ public class BitcoinValueController {
         final Timestamp timestampDesde = Timestamp.valueOf(fecha_desde);
         final Timestamp timestampHasta = Timestamp.valueOf(fecha_hasta);
         final Double value = bitcoinValueService.getPromedioCotizacionEntreFechasStream(timestampDesde.toLocalDateTime(), timestampHasta.toLocalDateTime());
-        return new ResponseEntity<Double>(value, OK);
+        if(value != 0d) return new ResponseEntity<Double>(value, OK);
+        return new ResponseEntity<String>(ERROR_MSG, NOT_FOUND);
     }
 
     @GetMapping("/registro")
@@ -41,6 +44,8 @@ public class BitcoinValueController {
         List<BitcoinValue> fechas = bitcoinValueService.getAllDates();
         return new ResponseEntity<List<BitcoinValue>>(fechas, OK);
     }
+
+    public static String ERROR_MSG = "No se encontro cotizacion para la/las fecha enviada";
 
 
 }
