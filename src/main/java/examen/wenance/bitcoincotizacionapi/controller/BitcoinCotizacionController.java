@@ -40,12 +40,12 @@ public class BitcoinCotizacionController {
     }
 
     @GetMapping("/registro")
-    public ResponseEntity<List<BitcoinValue>> getFechas(){
-        List<BitcoinValue> fechas = bitcoinValueService.getAllDates();
-        return new ResponseEntity<List<BitcoinValue>>(fechas, OK);
+    public ResponseEntity<List<String>> getFechas(){
+        List<String> fechas = bitcoinValueService.getAllDates();
+        return new ResponseEntity<List<String>>(fechas, OK);
     }
 
-    public static String ERROR_MSG = "No se encontro cotizacion para la/las fecha enviada";
+    public static String ERROR_MSG = "No se encontro cotizacion para la fecha enviada";
 
 
 }

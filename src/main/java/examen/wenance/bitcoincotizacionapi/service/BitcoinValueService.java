@@ -3,9 +3,9 @@ package examen.wenance.bitcoincotizacionapi.service;
 import examen.wenance.bitcoincotizacionapi.dao.BitcoinValueDao;
 import examen.wenance.bitcoincotizacionapi.model.BitcoinValue;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,8 +19,13 @@ public class BitcoinValueService {
     public BitcoinValueService() {
     }
 
-    public List<BitcoinValue> getAllDates() {
-        return bitcoinValueDao.findAll().stream().collect(Collectors.toList());
+    public List<String> getAllDates() {
+        return bitcoinValueDao.findAll()
+                .stream()
+                .map(bitcoinValue ->
+                        Timestamp.valueOf(bitcoinValue.getFechaCotizacion())
+                                .toString().replace("T", " "))
+                .collect(Collectors.toList());
     }
 
     public Double getCotizacionPorFecha(LocalDateTime localDateTime) {
@@ -50,9 +55,5 @@ public class BitcoinValueService {
                 .mapToDouble(BitcoinValue::getCotizacion)
                 .average()
                 .orElse(0d);
-    }
-
-    public Double getPromedioCotizacionEntreFechas(LocalDateTime localDateTimeDesde, LocalDateTime localDateTimeHasta) {
-        return bitcoinValueDao.getCotizacionesEntreFechas(localDateTimeDesde, localDateTimeHasta).stream().mapToDouble(BitcoinValue::getCotizacion).average().orElse(0d);
     }
 }
