@@ -64,7 +64,7 @@ paths:
         "200":
           description: "Valor promedio del Bitcoin"
           schema:
-            type: number
+            $ref: "#/definitions/BitcoinAverageInfo"
         "400":
           description: "Error en el formato de las fechas o en el valor de las fechas"
         "404":
@@ -86,7 +86,15 @@ paths:
             items:
               type: string
               format: "yyyy-mm-dd hh:mm:ss[.fffffffff]"
-
+definitions:
+  BitcoinAverageInfo:
+    type: "object"
+    properties:
+      average:
+        type: "number"
+      percent:
+        type: "number"
+        
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"

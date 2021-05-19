@@ -1,5 +1,6 @@
 package examen.wenance.bitcoincotizacionapi.controller;
 
+import examen.wenance.bitcoincotizacionapi.model.BitcoinAverageInfo;
 import examen.wenance.bitcoincotizacionapi.service.BitcoinValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -50,8 +51,8 @@ public class BitcoinCotizacionController {
         }
 
         if(timestampDesde.after(timestampHasta)) return new ResponseEntity<String>(DATES_ARE_WRONG.getValue(), BAD_REQUEST);
-        final Double value = bitcoinValueService.getPromedioCotizacionEntreFechasStream(timestampDesde.toLocalDateTime(), timestampHasta.toLocalDateTime());
-        if(value != 0d) return new ResponseEntity<Double>(value, OK);
+        final BitcoinAverageInfo bitcoinAvgInfo = bitcoinValueService.getPromedioCotizacionEntreFechasStream(timestampDesde.toLocalDateTime(), timestampHasta.toLocalDateTime());
+        if(bitcoinAvgInfo.getAverage() != 0d) return new ResponseEntity<BitcoinAverageInfo>(bitcoinAvgInfo, OK);
         return new ResponseEntity<String>(VALUE_NOT_FOUND.getValue(), NOT_FOUND);
     }
 

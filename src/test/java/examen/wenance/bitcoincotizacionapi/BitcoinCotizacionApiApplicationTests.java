@@ -2,6 +2,7 @@ package examen.wenance.bitcoincotizacionapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import examen.wenance.bitcoincotizacionapi.dao.BitcoinValueDao;
+import examen.wenance.bitcoincotizacionapi.model.BitcoinAverageInfo;
 import examen.wenance.bitcoincotizacionapi.model.BitcoinValue;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,7 +91,10 @@ public class BitcoinCotizacionApiApplicationTests {
 				.param("fecha_hasta", fechas.get(9)))
 				.andReturn();
 		assertThat(result.getResponse().getStatus()).isEqualTo(OK.value());
-		assertThat(Double.valueOf(result.getResponse().getContentAsString())).isEqualTo(5.5d);
+		final BitcoinAverageInfo bitcoinAverageInfo = objectMapper.readValue(result.getResponse().getContentAsString(), BitcoinAverageInfo.class);
+		assertThat(bitcoinAverageInfo.getAverage()).isEqualTo(5.5d);
+		assertThat(bitcoinAverageInfo.getPercent()).isEqualTo(81.82d);
+
 	}
 
 	@Test

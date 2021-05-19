@@ -1,7 +1,9 @@
 package examen.wenance.bitcoincotizacionapi.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import examen.wenance.bitcoincotizacionapi.BitcoinCotizacionApiApplication;
 import examen.wenance.bitcoincotizacionapi.dao.BitcoinValueDao;
+import examen.wenance.bitcoincotizacionapi.model.BitcoinAverageInfo;
 import examen.wenance.bitcoincotizacionapi.model.BitcoinValue;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +36,9 @@ public class BitcoinCotizacionControllerTest {
 
     @Autowired
     BitcoinValueDao bitcoinValueDao;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static LocalDateTime startTime;
 
@@ -70,7 +75,9 @@ public class BitcoinCotizacionControllerTest {
     public void getCotizacionPromedioEntreFechaTest(){
         final ResponseEntity<?> result = bitcoinCotizacionController.getPromedioCotizacionEntreFechas(buildStringTimestamp(startTime), buildStringTimestamp(startTime.plusSeconds(45)));
         assertThat(result.getStatusCode()).isEqualTo(OK);
-        assertThat(result.getBody()).isEqualTo(4.5d + 1);
+        final BitcoinAverageInfo bitcoinAverageInfo = (BitcoinAverageInfo)result.getBody();
+        assertThat(bitcoinAverageInfo.getAverage()).isEqualTo(5.5d);
+        assertThat(bitcoinAverageInfo.getPercent()).isEqualTo(81.82d);
     }
 
     @Test

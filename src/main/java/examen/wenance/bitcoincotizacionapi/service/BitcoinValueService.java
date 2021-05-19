@@ -1,15 +1,22 @@
 package examen.wenance.bitcoincotizacionapi.service;
 
 import examen.wenance.bitcoincotizacionapi.dao.BitcoinValueDao;
+import examen.wenance.bitcoincotizacionapi.model.BitcoinAverageInfo;
 import examen.wenance.bitcoincotizacionapi.model.BitcoinValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 @Service
 public class BitcoinValueService {
@@ -43,18 +50,21 @@ public class BitcoinValueService {
                 .sum();
     }
 
-    public Double getPromedioCotizacionEntreFechasStream(LocalDateTime localDateTimeDesde, LocalDateTime localDateTimeHasta) {
-        return bitcoinValueDao.findAll()
-                .stream()
-                .filter(bv->
-                        bv.getFechaCotizacion().equals(localDateTimeDesde) ||
+    public BitcoinAverageInfo getPromedioCotizacionEntreFechasStream(LocalDateTime localDateTimeDesde, LocalDateTime localDateTimeHasta) {
+
+        final Supplier<Stream<BitcoinValue>> streamSupplier = () -> bitcoinValueDao.findAll().stream().filter(bv ->
+                bv.getFechaCotizacion().equals(localDateTimeDesde) ||
                         (bv.getFechaCotizacion().isAfter(localDateTimeDesde)
                                 && bv.getFechaCotizacion().isBefore(localDateTimeHasta)) ||
-                        bv.getFechaCotizacion().equals(localDateTimeHasta)
+                        bv.getFechaCotizacion().equals(localDateTimeHasta));
 
-                )
-                .mapToDouble(BitcoinValue::getCotizacion)
-                .average()
-                .orElse(0d);
+        final double max = streamSupplier.get().mapToDouble(BitcoinValue::getCotizacion).max().orElse(0d);
+        final double average = streamSupplier.get().mapToDouble(BitcoinValue::getCotizacion).average().orElse(0d);
+
+        final BitcoinAverageInfo bitcoinAverageInfo = new BitcoinAverageInfo();
+        bitcoinAverageInfo.setAverage(average);
+        bitcoinAverageInfo.calculatePercent(max);
+
+        return bitcoinAverageInfo;
     }
 }
