@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.DATES_ARE_WRONG;
-import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.DATES_FORMAT_WRONG;
+import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.DATE_FORMAT_WRONG;
 import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.VALUE_NOT_FOUND;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -31,7 +31,7 @@ public class BitcoinCotizacionController {
         try{
             timestamp = Timestamp.valueOf(fecha_exacta);
         }catch (final IllegalArgumentException exception){
-            return new ResponseEntity<String>(DATES_FORMAT_WRONG.getValue(), BAD_REQUEST);
+            return new ResponseEntity<String>(DATE_FORMAT_WRONG.getValue(), BAD_REQUEST);
         }
         final Double value = bitcoinValueService.getCotizacionPorFechaStream(timestamp.toLocalDateTime());
         if(value != 0d) return new ResponseEntity<Double>(value, OK);
@@ -46,7 +46,7 @@ public class BitcoinCotizacionController {
             timestampDesde = Timestamp.valueOf(fecha_desde);
             timestampHasta = Timestamp.valueOf(fecha_hasta);
         }catch (final IllegalArgumentException exception){
-            return new ResponseEntity<String>(DATES_FORMAT_WRONG.getValue(), BAD_REQUEST);
+            return new ResponseEntity<String>(DATE_FORMAT_WRONG.getValue(), BAD_REQUEST);
         }
 
         if(timestampDesde.after(timestampHasta)) return new ResponseEntity<String>(DATES_ARE_WRONG.getValue(), BAD_REQUEST);

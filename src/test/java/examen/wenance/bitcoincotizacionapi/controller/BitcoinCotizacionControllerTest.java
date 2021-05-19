@@ -10,12 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 
 import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.DATES_ARE_WRONG;
-import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.DATES_FORMAT_WRONG;
+import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.DATE_FORMAT_WRONG;
 import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.VALUE_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -25,6 +26,7 @@ import static org.springframework.http.HttpStatus.OK;
 @SpringBootTest(classes = BitcoinCotizacionApiApplication.class)
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BitcoinCotizacionControllerTest {
 
     @Autowired
@@ -34,15 +36,11 @@ public class BitcoinCotizacionControllerTest {
     BitcoinValueDao bitcoinValueDao;
 
     private static LocalDateTime startTime;
-    private static boolean runOnlyOnce = true;
 
     @Before
     public void setUp(){
-        if(runOnlyOnce){
-            startTime = LocalDateTime.now();
-            setUp(startTime);
-            runOnlyOnce = false;
-        }
+        startTime = LocalDateTime.now();
+        setUp(startTime);
     }
 
     @Test
@@ -58,7 +56,7 @@ public class BitcoinCotizacionControllerTest {
     public void getCotizacionPorFechaWrongFormatTest(){
         final ResponseEntity<?> result = bitcoinCotizacionController.getCotizacionPorFecha(startTime.toString());
         assertThat(result.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(result.getBody()).isEqualTo(DATES_FORMAT_WRONG.getValue());
+        assertThat(result.getBody()).isEqualTo(DATE_FORMAT_WRONG.getValue());
     }
 
     @Test
@@ -79,7 +77,7 @@ public class BitcoinCotizacionControllerTest {
     public void getCotizacionPromedioEntreFechaErrorTest(){
         final ResponseEntity<?> result = bitcoinCotizacionController.getPromedioCotizacionEntreFechas(buildStringTimestamp(startTime.plusSeconds(50)), buildStringTimestamp(startTime.plusSeconds(100)));
         assertThat(result.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(result.getBody()).isEqualTo(VALUE_NOT_FOUND);
+        assertThat(result.getBody()).isEqualTo(VALUE_NOT_FOUND.getValue());
     }
 
     @Test
