@@ -14,8 +14,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 
-import static examen.wenance.bitcoincotizacionapi.controller.BitcoinCotizacionController.ERROR_MSG;
+import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.DATES_ARE_WRONG;
+import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.DATES_FORMAT_WRONG;
+import static examen.wenance.bitcoincotizacionapi.controller.ControllerMessages.VALUE_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -52,10 +55,17 @@ public class BitcoinCotizacionControllerTest {
     }
 
     @Test
+    public void getCotizacionPorFechaWrongFormatTest(){
+        final ResponseEntity<?> result = bitcoinCotizacionController.getCotizacionPorFecha(startTime.toString());
+        assertThat(result.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(result.getBody()).isEqualTo(DATES_FORMAT_WRONG.getValue());
+    }
+
+    @Test
     public void getCotizacionPorFechaErrorTest(){
         final ResponseEntity<?> result = bitcoinCotizacionController.getCotizacionPorFecha(buildStringTimestamp(startTime.plusSeconds(50)));
         assertThat(result.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(result.getBody()).isEqualTo(ERROR_MSG);
+        assertThat(result.getBody()).isEqualTo(VALUE_NOT_FOUND.getValue());
     }
 
     @Test
@@ -69,7 +79,14 @@ public class BitcoinCotizacionControllerTest {
     public void getCotizacionPromedioEntreFechaErrorTest(){
         final ResponseEntity<?> result = bitcoinCotizacionController.getPromedioCotizacionEntreFechas(buildStringTimestamp(startTime.plusSeconds(50)), buildStringTimestamp(startTime.plusSeconds(100)));
         assertThat(result.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(result.getBody()).isEqualTo(ERROR_MSG);
+        assertThat(result.getBody()).isEqualTo(VALUE_NOT_FOUND);
+    }
+
+    @Test
+    public void getCotizacionPromedioEntreFechaErrorDatesTest(){
+        final ResponseEntity<?> result = bitcoinCotizacionController.getPromedioCotizacionEntreFechas(buildStringTimestamp(startTime.plusSeconds(100)), buildStringTimestamp(startTime.plusSeconds(50)));
+        assertThat(result.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(result.getBody()).isEqualTo(DATES_ARE_WRONG.getValue());
     }
 
     public void setUp(LocalDateTime now){

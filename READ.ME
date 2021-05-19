@@ -1,0 +1,14 @@
+
+API de Cotizacion del Bitcoin
+
+
+Instrucciones de uso:
+
+1- Ejecutar la clase BitcoinCotizacionApiApplication. 
+   Al iniciar la aplicacion se ejecutara cada 5 segundos una tarea agendada llamada "BitcoinValueSearchTask", la cual consulta el valor del Bitcoin en Dolares a un endpoint externo y lo guarda en la base de datos en memoria.
+2- La api cuenta con 3 endpoints:
+	- Consulta de Fechas guardadas: Se listan las fechas de los registros guardados por la tarea.
+	- Consulta del valor del Bitcoin en una fecha particular: Se envia por parametro una fecha Timestamp y se recibe el valor.
+	- Consulta del valor promedio del Bitcoin entre 2 fechas: Se envia por parametro 2 fechas Timestamp y se recibe el valor.
+
+Documentacion de API: En la misma ubicacion de este archivo encontrara el archivo "CotizacionBitcoinAPI.yaml" con la especificacion de cada endpoint.
