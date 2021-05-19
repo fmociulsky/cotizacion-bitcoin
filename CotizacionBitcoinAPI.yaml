@@ -1,0 +1,92 @@
+swagger: "2.0"
+info:
+  description: "Api para obtener informacion sobre el valor de Bitcoin"
+  version: "1.0.0"
+  title: "Cotizacion del Bitcoin"
+  contact:
+    email: "fmociulsky@yahoo.com.ar"
+host: "localhost:8081"
+schemes:
+- "https"
+- "http"
+paths:
+  /cotizaciones:
+    get:
+      tags:
+      - "Cotizacion"
+      summary: "Consulta de la cotizacion del Bitcoin por fecha"
+      operationId: "getCotizacionPorFecha"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "fecha_exacta"
+        in: "query"
+        description: "Fecha exacta de consulta de la cotizacion"
+        required: true
+        type: "string"
+        format: "yyyy-mm-dd hh:mm:ss[.fffffffff]"
+      responses:
+        "200":
+          description: "Valor del Bitcoin"
+          schema:
+            type: number
+        "400":
+          description: "El formato de la fecha enviada es incorrecta: se espera el formato yyyy-mm-dd hh:mm:ss[.fffffffff]"
+        "404":
+          description: "No se encontro cotizacion para la fecha enviada"
+            
+  /cotizaciones/promedio:
+    get:
+      tags:
+      - "Cotizacion"
+      summary: "Consulta del promedio de cotizacion del Bitcoin entre 2 fechas"
+      operationId: "getPromedioCotizacionEntreFechas"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "fecha_desde"
+        in: "query"
+        description: "Fecha desde la cual se debe consultar la cotizacion"
+        required: true
+        type: "string"
+        format: "yyyy-mm-dd hh:mm:ss[.fffffffff]"
+      - name: "fecha_hasta"
+        in: "query"
+        description: "Fecha hasta la cual se debe consultar la cotizacion"
+        required: true
+        type: "string"
+        format: "yyyy-mm-dd hh:mm:ss[.fffffffff]"
+      responses:
+        "200":
+          description: "Valor promedio del Bitcoin"
+          schema:
+            type: number
+        "400":
+          description: "Error en el formato de las fechas o en el valor de las fechas"
+        "404":
+          description: "No se encontro cotizacion para la fecha enviada"
+  /cotizaciones/registro:
+    get:
+      tags:
+      - "Fechas"
+      summary: "Consulta de las Fechas registradas de cotizacion del Bitcoin"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Fechas con formato yyyy-mm-dd hh:mm:ss[.fffffffff]"
+          schema:
+            type: "object"
+            items:
+              type: string
+              format: "yyyy-mm-dd hh:mm:ss[.fffffffff]"
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
